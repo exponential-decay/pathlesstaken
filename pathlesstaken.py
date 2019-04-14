@@ -1,17 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#
-# pathlesstaken
-#
-# First based on the recommendations here:
-#   http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx
-#
-# Module that implements checks against the Microsoft Recommendations for
-# file naming.
-#
-#
+
+"""pathlesstaken
+
+Module that implements checks against the Microsoft Recommendations for
+file naming, plus additional recommended analyses documented below.
+
+First created based on the recommendations here:
+    http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx
+
+First available in:
+    https://github.com/exponential-decay/droid-siegfried-sqlite-analysis-engine
+
+"""
+
 from __future__ import print_function, unicode_literals
-import logging
 import os
 import sys
 
@@ -23,21 +26,39 @@ except ModuleNotFoundError:
 sys.path.append(r"i18n/")
 from internationalstrings import AnalysisStringsEN as IN_EN
 
+_version_string = "0.0.1"
+
+
+def __version__():
+    return _version_string
+
 
 class PathlesstakenAnalysis(object):
-    """Filename analysis class."""
+    """PathlesstakenAnalysis
 
-    report = ""
+    Class to encapsulate the functionality that can be accessed via this
+    module. All functions are documented further below.
+    """
 
     def __init__(self):
         """Class initialization."""
+        self.report = ""
         self.STRINGS = IN_EN
 
     def _clear_report(self):
         self.report = ""
 
     def complete_file_name_analysis(self, string, folders=False, verbose=False):
-        """Primary code to call to run all checks over our string."""
+        """Run all analyses over a string object. The analyses are as follows:
+
+            * detect_non_ascii_characters
+            * detect_non_recommended_characters
+            * detect_non_printable_characters
+            * detect_microsoft_reserved_names
+            * detect_spaces_at_end_of_names
+            * detect_period_at_end_of_name
+
+        """
         self._clear_report()
         self.verbose = verbose
         self.detect_non_ascii_characters(string, folders)
@@ -48,8 +69,8 @@ class PathlesstakenAnalysis(object):
         self.detect_period_at_end_of_name(string, folders)
         return self.report
 
-    def report_issue(self, string, message, value, folders=False):
-        """Helper to build our report to return to the caller."""
+    def _report_issue(self, string, message, value, folders=False):
+        """Helper function to build the report to return to the caller."""
         text = "File"
         if folders:
             text = "Directory"
@@ -61,7 +82,7 @@ class PathlesstakenAnalysis(object):
         )
 
     @staticmethod
-    def unicodename(char):
+    def _unicodename(char):
         """Return a Unicode name for the character we want to return
         information about.
         """
@@ -74,46 +95,53 @@ class PathlesstakenAnalysis(object):
             return "non-specified error"
 
     def detect_non_ascii_characters(self, string, folders=False):
-        """Detect characters outside the standard range of ASCII here."""
+        """Detect characters outside of an ASCII range. These are more
+        difficult to preserve in today's systems, even still, though it is
+        getting easier.
+        """
         match = any(ord(char) > 128 for char in string)
         if match:
             for char in string:
                 if ord(char) > 128:
-                    self.report_issue(
+                    self._report_issue(
                         string=string,
                         message="{}:".format(self.STRINGS.FNAME_CHECK_ASCII),
-                        value="{}, {}".format(hex(ord(char)), self.unicodename(char)),
+                        value="{}, {}".format(hex(ord(char)), self._unicodename(char)),
                         folders=folders,
                     )
                 if not self.verbose:
                     break
 
     def detect_non_recommended_characters(self, string, folders=False):
-        """Detect characters that are not particularly recommended here."""
+        """Detect characters that are not particularly recommended. These
+        characters for example a forward slash '/' often have other meanings
+        in computer systems and can be interpreted incorrectly if not handled
+        properly.
+        """
         charlist = ["<", ">", '"', "?", "*", "|", "]", "["]
         if not folders:
             charlist = charlist + [":", "/", "\\"]
         for char in string:
             if char in charlist:
-                self.report_issue(
+                self._report_issue(
                     string=string,
                     message="{}:".format(self.STRINGS.FNAME_CHECK_NOT_RECOMMENDED),
-                    value=("{}, {}".format(hex(ord(char)), self.unicodename(char))),
+                    value=("{}, {}".format(hex(ord(char)), self._unicodename(char))),
                     folders=folders,
                 )
                 if not self.verbose:
                     break
 
     def detect_non_printable_characters(self, string, folders=False):
-        """Detect characters below 0x20 in the ascii table that cannot be
-        printed.
+        """Detect control characters below 0x20 in the ASCII table that cannot
+        be printed. Examples include ESC (escape) or BS (backspace).
         """
         for char in range(0x20):
             if chr(char) in string:
-                self.report_issue(
+                self._report_issue(
                     string=string,
                     message="{}:".format(self.STRINGS.FNAME_CHECK_NON_PRINT),
-                    value="{}, {}".format(hex(char), self.unicodename(char)),
+                    value="{}, {}".format(hex(char), self._unicodename(char)),
                     folders=folders,
                 )
                 if not self.verbose:
@@ -121,7 +149,11 @@ class PathlesstakenAnalysis(object):
 
     def detect_microsoft_reserved_names(self, string):
         """Detect names that are considered difficult on Microsoft file
-        systems.
+        systems. There is a special history to these characters which can be
+        read about on this link below:
+
+            * http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx
+
         """
         microsoft_reserved_names = [
             "CON",
@@ -159,16 +191,19 @@ class PathlesstakenAnalysis(object):
                     # This is an exact reserved name match.
                     problem = True
                 if problem:
-                    self.report_issue(
+                    self._report_issue(
                         string=string,
                         message=self.STRINGS.FNAME_CHECK_RESERVED,
                         value=reserved,
                     )
 
     def detect_spaces_at_end_of_names(self, string, folders=False):
-        """Detect spaces at the end of a name."""
+        """Detect spaces at the end of a string. These spaces if ignored can
+        lead to incorrectly matching strings, e.g. 'this ' is different to
+        'this'.
+        """
         if string.endswith(" "):
-            self.report_issue(
+            self._report_issue(
                 string=string,
                 message=self.STRINGS.FNAME_CHECK_SPACE,
                 value=None,
@@ -176,16 +211,17 @@ class PathlesstakenAnalysis(object):
             )
 
     def detect_period_at_end_of_name(self, string, folders=False):
-        """Detect a full-stop at the end of a name."""
+        """Detect a full-stop at the end of a name. This might indicate a
+        missing file extension."""
         if string.endswith("."):
-            self.report_issue(
+            self._report_issue(
                 string=string,
                 message=self.STRINGS.FNAME_CHECK_PERIOD,
                 value=None,
                 folders=folders,
             )
 
-    def __detect_invalid_characters_test__(self):
+    def _detect_invalid_characters_test(self):
         """Function to help with testing until there are unit tests."""
         test_strings = [
             "COM4",
@@ -219,7 +255,19 @@ class PathlesstakenAnalysis(object):
 
 
 def main():
-    """Primary entry-point for this script."""
+    """pathlesstaken is a script to identify strings that when interpreted as
+    file paths might prove more difficult to look after and preserve. The
+    example given previously was special Microsoft reserved names. Other
+    examples might include non-ASCII characters in a horrendously ASCII biased
+    world.
+
+    Notes: Running this code via main will output the most information possible
+    about a string. The function complete_file_name_analysis can be called on
+    the module level (or all other analysis functions) with verbose reporting
+    turned off if the caller would like to see just the first instance of a
+    string that might need additional processing attention, i.e. as a flag that
+    there is something to look at.
+    """
     cmd = " ".join(sys.argv[1:])
     try:
         cmd = cmd.decode("utf-8")
@@ -237,6 +285,7 @@ def main():
     )
     if analysis:
         print(analysis.strip(), file=sys.stdout)
+
 
 if __name__ == "__main__":
     main()

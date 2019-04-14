@@ -4,6 +4,10 @@ Profile strings, e.g. file paths for digital preservation considerations, e.g.
 characters that you want to preserve, or characters that you don't want to
 preserve.
 
+`pathlesstaken` has no external dependencies so you can clone this repo and
+just run it. Just as long as your environment supports Python and you can
+download it!
+
 ## Basis for this module
 
 The original analysis was based around this non-recommended filenames from
@@ -27,7 +31,7 @@ The bigger project this code was developed for is still here:
 
 ## Example output
 
-Given a Unicode string: `❤💖💙💚💛💜💝♕♖♗♘♙♚♛♜♝♞♟`
+Given a Unicode string: `$ pathlesstaken.py ❤💖💙💚💛💜💝♕♖♗♘♙♚♛♜♝♞♟`
 ```bash
 File: '❤💖💙💚💛💜💝♕♖♗♘♙♚♛♜♝♞♟' contains, characters outside of ASCII range: '0x2764, HEAVY BLACK HEART: ❤'
 File: '❤💖💙💚💛💜💝♕♖♗♘♙♚♛♜♝♞♟' contains, characters outside of ASCII range: '0x1f496, SPARKLING HEART: 💖'
@@ -96,6 +100,66 @@ created in Golang and using utilities from Richard Lehane's
 
 [pathless-6]: https://github.com/exponential-decay/fndec
 [pathless-7]: https://github.com/richardlehane/siegfried
+
+## Docs
+
+All docs are available in [docs](docs).
+
+```manpage
+DESCRIPTION
+    Module that implements checks against the Microsoft Recommendations for
+    file naming, plus additional recommended analyses documented below.
+
+    First created based on the recommendations here:
+        http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx
+
+    First available in:
+        https://github.com/exponential-decay/droid-siegfried-sqlite-analysis-engine
+
+    Methods defined here:
+     |
+     |  complete_file_name_analysis(self, string, folders=False, verbose=False)
+     |      Run all analyses over a string object. The analyses are as follows:
+     |
+     |      * detect_non_ascii_characters
+     |      * detect_non_recommended_characters
+     |      * detect_non_printable_characters
+     |      * detect_microsoft_reserved_names
+     |      * detect_spaces_at_end_of_names
+     |      * detect_period_at_end_of_name
+     |
+     |  detect_microsoft_reserved_names(self, string)
+     |      Detect names that are considered difficult on Microsoft file
+     |      systems. There is a special history to these characters which can be
+     |      read about on this link below:
+     |
+     |          * http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx
+     |
+     |  detect_non_ascii_characters(self, string, folders=False)
+     |      Detect characters outside of an ASCII range. These are more
+     |      difficult to preserve in today's systems, even still, though it is
+     |      getting easier.
+     |
+     |  detect_non_printable_characters(self, string, folders=False)
+     |      Detect control characters below 0x20 in the ASCII table that cannot
+     |      be printed. Examples include ESC (escape) or BS (backspace).
+     |
+     |  detect_non_recommended_characters(self, string, folders=False)
+     |      Detect characters that are not particularly recommended. These
+     |      characters for example a forward slash '/' often have other meanings
+     |      in computer systems and can be interpreted incorrectly if not handled
+     |      properly.
+     |
+     |  detect_period_at_end_of_name(self, string, folders=False)
+     |      Detect a full-stop at the end of a name. This might indicate a
+     |      missing file extension.
+     |
+     |  detect_spaces_at_end_of_names(self, string, folders=False)
+     |      Detect spaces at the end of a string. These spaces if ignored can
+     |      lead to incorrectly matching strings, e.g. 'this ' is different to
+     |      'this'.
+     |
+```
 
 ### License
 
