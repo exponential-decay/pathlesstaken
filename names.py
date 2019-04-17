@@ -60,11 +60,10 @@ class Lookup(object):
 
 def main():
     """Primary entry point for this script."""
-    cmd = " ".join(sys.argv[1:])
     try:
-        cmd = cmd.decode("utf-8")
-    except AttributeError:
-        pass
+        cmd = " ".join(sys.argv[1:])
+    except UnicodeDecodeError:
+        cmd = "".join([arg.decode("utf8") for arg in sys.argv[1:]])
     ref = Lookup()
     for char in cmd:
         name = ref.name(char)

@@ -268,11 +268,10 @@ def main():
     string that might need additional processing attention, i.e. as a flag that
     there is something to look at.
     """
-    cmd = " ".join(sys.argv[1:])
     try:
-        cmd = cmd.decode("utf-8")
-    except AttributeError:
-        pass
+        cmd = " ".join(sys.argv[1:])
+    except UnicodeDecodeError:
+        cmd = "".join([arg.decode("utf8") for arg in sys.argv[1:]])
     if "test" in cmd.lower() and not os.path.isfile(cmd):
         print(
             "Running non-file test mode only, please use a string without 'test' in it.",
