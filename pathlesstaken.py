@@ -268,6 +268,7 @@ def main():
     string that might need additional processing attention, i.e. as a flag that
     there is something to look at.
     """
+    analysis = None
     try:
         cmd = " ".join(sys.argv[1:])
     except UnicodeDecodeError:
@@ -279,11 +280,22 @@ def main():
         )
         PathlesstakenAnalysis().__detect_invalid_characters_test__()
         return
-    analysis = PathlesstakenAnalysis().complete_file_name_analysis(
-        cmd, folders=False, verbose=True
-    )
-    if analysis:
-        print(analysis.strip(), file=sys.stdout)
+    if os.path.isfile(cmd):
+        with open(cmd, "r") as file_:
+            for line in file_:
+                analysis = PathlesstakenAnalysis().complete_file_name_analysis(
+                    os.path.basename(line.strip().replace('"', "")),
+                    folders=False,
+                    verbose=True,
+                )
+                if analysis:
+                    print(analysis.strip(), file=sys.stdout)
+    else:
+        analysis = PathlesstakenAnalysis().complete_file_name_analysis(
+            cmd, folders=False, verbose=True
+        )
+        if analysis:
+            print(analysis.strip(), file=sys.stdout)
 
 
 if __name__ == "__main__":
