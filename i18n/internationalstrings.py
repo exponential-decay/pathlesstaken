@@ -2,13 +2,16 @@
 
 """International Strings.py
 
-Module to be build up over time to make strings in output more international.
+Module to be build up over time to make strings in output more
+international.
 """
 
+
 class AnalysisStringsEN:
-    """Encapsulate a set of strings that can be replaced in code to make the 
-    output understandable in other languages.
+    """Encapsulate a set of strings that can be replaced in code to make
+    the output understandable in other languages.
     """
+
     FNAME_CHECK_ASCII = "contains, characters outside of ASCII range"
     FNAME_CHECK_PERIOD = "has a period '.' as its last character"
     FNAME_CHECK_NOT_RECOMMENDED = "contains, non-recommended character"
