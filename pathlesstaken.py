@@ -284,6 +284,9 @@ def main():
     )
     if analysis:
         print(analysis.strip(), file=sys.stdout)
+        sys.exit(1)
+    print("Analysis did not return any particular digital preservation considerations for name:", cmd, analysis.strip(), file=sys.stdout)
+
 
 
 if __name__ == "__main__":
