@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """pathlesstaken
@@ -14,7 +13,7 @@ First available in:
 
 """
 
-from __future__ import print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals
 
 import os
 import sys
@@ -51,12 +50,12 @@ class PathlesstakenAnalysis(object):
     def complete_file_name_analysis(self, string, folders=False, verbose=False):
         """Run all analyses over a string object. The analyses are as follows:
 
-            * detect_non_ascii_characters
-            * detect_non_recommended_characters
-            * detect_non_printable_characters
-            * detect_microsoft_reserved_names
-            * detect_spaces_at_end_of_names
-            * detect_period_at_end_of_name
+        * detect_non_ascii_characters
+        * detect_non_recommended_characters
+        * detect_non_printable_characters
+        * detect_microsoft_reserved_names
+        * detect_spaces_at_end_of_names
+        * detect_period_at_end_of_name
 
         """
         self._clear_report()
@@ -285,8 +284,12 @@ def main():
     if analysis:
         print(analysis.strip(), file=sys.stdout)
         sys.exit(1)
-    print("Analysis did not return any particular digital preservation considerations for name:", cmd, analysis.strip(), file=sys.stdout)
-
+    print(
+        "Analysis did not return any particular digital preservation considerations for name:",
+        cmd,
+        analysis.strip(),
+        file=sys.stdout,
+    )
 
 
 if __name__ == "__main__":

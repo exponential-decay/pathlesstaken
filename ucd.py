@@ -30630,7 +30630,7 @@ UCD_MAP = {
 
 def main():
     """Primary entry-point for this script."""
-    print(len(UCD_MAP.keys()))
+    print(len(UCD_MAP))
 
 
 if __name__ == "__main__":
