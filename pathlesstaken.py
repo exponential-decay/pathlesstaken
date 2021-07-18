@@ -20,7 +20,7 @@ import sys
 
 try:
     import names
-except ModuleNotFoundError:
+except ImportError:
     from . import names
 
 from i18n.internationalstrings import AnalysisStringsEN as IN_EN
@@ -101,13 +101,14 @@ class PathlesstakenAnalysis(object):
         match = any(ord(char) > 128 for char in string)
         if match:
             for char in string:
-                if ord(char) > 128:
-                    self._report_issue(
-                        string=string,
-                        message="{}:".format(self.STRINGS.FNAME_CHECK_ASCII),
-                        value="{}, {}".format(hex(ord(char)), self._unicodename(char)),
-                        folders=folders,
-                    )
+                if ord(char) <= 128:
+                    continue
+                self._report_issue(
+                    string=string,
+                    message="{}:".format(self.STRINGS.FNAME_CHECK_ASCII),
+                    value="{}, {}".format(hex(ord(char)), self._unicodename(char)),
+                    folders=folders,
+                )
                 if not self.verbose:
                     break
 

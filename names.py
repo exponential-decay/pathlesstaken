@@ -32,11 +32,19 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import, print_function, unicode_literals
 
+import logging
 import sys
+
+LOGFORMAT = (
+    "%(asctime)-15s %(levelname)s: %(filename)s:%(lineno)s:%(funcName)s(): %(message)s"
+)
+DATEFORMAT = "%Y-%m-%d %H:%M:%S"
+
+logging.basicConfig(format=LOGFORMAT, datefmt=DATEFORMAT, level="INFO")
 
 try:
     import ucd
-except ModuleNotFoundError:
+except ImportError:
     from . import ucd
 
 
@@ -54,7 +62,7 @@ class Lookup(object):
         """
         id_ = ord(char)
         hex_ = "%04X" % id_
-        print("INFO: char: %s id: %s hex: %s" % (char, id_, hex_), file=sys.stderr)
+        logging.debug("INFO: char: %s id: %s hex: %s" % (char, id_, hex_))
         return ucd.UCD_MAP.get(hex_, None)
 
 
