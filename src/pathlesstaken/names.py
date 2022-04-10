@@ -42,10 +42,7 @@ DATEFORMAT = "%Y-%m-%d %H:%M:%S"
 
 logging.basicConfig(format=LOGFORMAT, datefmt=DATEFORMAT, level="INFO")
 
-try:
-    import ucd
-except ImportError:
-    from . import ucd
+from . import ucd
 
 
 class Lookup(object):

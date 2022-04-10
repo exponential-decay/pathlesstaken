@@ -96,7 +96,7 @@ Please let me know how it goes if you try out this code.
 If you like to understand your filepaths, but don't need all the detail,
 there's a third-way, by taking a look at the [fndec][pathless-6] project I
 created in Golang and using utilities from Richard Lehane's
-[Siegfied][pathless-7]. More info after the jump.
+[Siegfried][pathless-7]. More info after the jump.
 
 [pathless-6]: https://github.com/exponential-decay/fndec
 [pathless-7]: https://github.com/richardlehane/siegfried
