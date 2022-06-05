@@ -8,16 +8,16 @@ package-deps:                                   ## Upgrade dependencies for pack
 package-source:                                 ## Package the source code
 	python3 setup.py sdist
 
-package-wheel: package-deps                     ## Package a Python wheel
+package-wheel: clean package-deps                     ## Package a Python wheel
 	python3 setup.py bdist_wheel --universal
 
-package-check: package-source package-wheel     ## Check the distribution is valid
+package-check: clean package-source package-wheel     ## Check the distribution is valid
 	twine check dist/*
 
-package-upload-test: package-deps package-check      ## Upload package to test.pypi
+package-upload-test: clean package-deps package-check      ## Upload package to test.pypi
 	twine upload dist/* --repository-url https://test.pypi.org/legacy/ --verbose
 
-package-upload: package-deps package-check      ## Upload package to pypi
+package-upload: clean package-deps package-check      ## Upload package to pypi
 	twine upload dist/* --repository-url https://pypi.org/legacy/ --verbose
 
 package: package-upload
