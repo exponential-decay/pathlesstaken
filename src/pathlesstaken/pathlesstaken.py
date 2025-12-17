@@ -16,18 +16,24 @@ First available in:
 import os
 import sys
 
-try:
-    import names
-    from i18n.internationalstrings import AnalysisStringsEN as IN_EN
-except ModuleNotFoundError:
+if os.name != "nt":
     try:
-        from src.pathlesstaken import names
-        from src.pathlesstaken.i18n.internationalstrings import (
-            AnalysisStringsEN as IN_EN,
-        )
+        import names
+        from i18n.internationalstrings import AnalysisStringsEN as IN_EN
     except ModuleNotFoundError:
-        from pathlesstaken import names
-        from pathlesstaken.i18n.internationalstrings import AnalysisStringsEN as IN_EN
+        try:
+            from src.pathlesstaken import names
+            from src.pathlesstaken.i18n.internationalstrings import (
+                AnalysisStringsEN as IN_EN,
+            )
+        except ModuleNotFoundError:
+            from pathlesstaken import names
+            from pathlesstaken.i18n.internationalstrings import (
+                AnalysisStringsEN as IN_EN,
+            )
+else:
+    from . import names
+    from .i18n.internationalstrings import AnalysisStringsEN as IN_EN
 
 
 class PathlesstakenAnalysis(object):
