@@ -30,10 +30,16 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 import logging
 import sys
+
+try:
+    import ucd
+except ModuleNotFoundError:
+    try:
+        from src.pathlesstaken import ucd
+    except ModuleNotFoundError:
+        from pathlesstaken import ucd
 
 LOGFORMAT = (
     "%(asctime)-15s %(levelname)s: %(filename)s:%(lineno)s:%(funcName)s(): %(message)s"
@@ -42,15 +48,12 @@ DATEFORMAT = "%Y-%m-%d %H:%M:%S"
 
 logging.basicConfig(format=LOGFORMAT, datefmt=DATEFORMAT, level="INFO")
 
-from . import ucd
-
 
 class Lookup(object):
     """Class responsible for lookup of Unicode character names."""
 
     def __init__(self):
         """Class initialization."""
-        pass
 
     @staticmethod
     def name(char):
@@ -59,7 +62,7 @@ class Lookup(object):
         """
         id_ = ord(char)
         hex_ = "%04X" % id_
-        logging.debug("INFO: char: %s id: %s hex: %s" % (char, id_, hex_))
+        logging.debug("INFO: char: %s id: %s hex: %s", char, id_, hex_)
         return ucd.UCD_MAP.get(hex_, None)
 
 

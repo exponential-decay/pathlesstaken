@@ -13,13 +13,21 @@ First available in:
 
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 import os
 import sys
 
-from . import names
-from .i18n.internationalstrings import AnalysisStringsEN as IN_EN
+try:
+    import names
+    from i18n.internationalstrings import AnalysisStringsEN as IN_EN
+except ModuleNotFoundError:
+    try:
+        from src.pathlesstaken import names
+        from src.pathlesstaken.i18n.internationalstrings import (
+            AnalysisStringsEN as IN_EN,
+        )
+    except ModuleNotFoundError:
+        from pathlesstaken import names
+        from pathlesstaken.i18n.internationalstrings import AnalysisStringsEN as IN_EN
 
 
 class PathlesstakenAnalysis(object):
@@ -79,7 +87,9 @@ class PathlesstakenAnalysis(object):
             name = names.Lookup().name(char)
             return "%s: %s" % (name, char)
         except TypeError:
-            if char >= 0 and char <= 31:
+            if char >= 0:
+                return "<control character>"
+            if char <= 31:
                 return "<control character>"
             return "non-specified error"
 
@@ -211,7 +221,7 @@ class PathlesstakenAnalysis(object):
                 folders=folders,
             )
 
-    def _detect_invalid_characters_test(self):
+    def detect_invalid_characters_test(self):
         """Function to help with testing until there are unit tests."""
         test_strings = [
             "COM4",
@@ -226,10 +236,10 @@ class PathlesstakenAnalysis(object):
             "consumer",
             "space ",
             "period.",
-            "\u00F3",
-            "\u00E9",
-            "\u00F6",
-            "\u00F3\u00E9\u00F6",
+            "\u00f3",
+            "\u00e9",
+            "\u00f6",
+            "\u00f3\u00e9\u00f6",
             "file[bracket]one.txt",
             "file[two.txt",
             "filethree].txt",
@@ -267,7 +277,7 @@ def main():
             "Running non-file test mode only, please use a string without 'test' in it.",
             file=sys.stderr,
         )
-        PathlesstakenAnalysis()._detect_invalid_characters_test()
+        PathlesstakenAnalysis().detect_invalid_characters_test()
         return
     analysis = PathlesstakenAnalysis().complete_file_name_analysis(
         cmd, folders=False, verbose=True
