@@ -32,14 +32,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
 import sys
+import os
 
-try:
-    import ucd
-except ModuleNotFoundError:
+if os.name != "nt":
     try:
-        from src.pathlesstaken import ucd
+        import ucd
     except ModuleNotFoundError:
-        from pathlesstaken import ucd
+        try:
+            from src.pathlesstaken import ucd
+        except ModuleNotFoundError:
+            from pathlesstaken import ucd
+else:
+    from . import ucd
 
 LOGFORMAT = (
     "%(asctime)-15s %(levelname)s: %(filename)s:%(lineno)s:%(funcName)s(): %(message)s"
