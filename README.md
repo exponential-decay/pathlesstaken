@@ -1,5 +1,7 @@
 # pathlesstaken
 
+<!--markdownlint-disable-->
+
 Profile strings, e.g. file paths for digital preservation considerations, e.g.
 characters that you want to preserve, or characters that you don't want to
 preserve.

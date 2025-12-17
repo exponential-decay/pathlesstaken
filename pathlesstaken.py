@@ -2,7 +2,11 @@
 code from the repository and not pypi.
 """
 
+import sys
+
 from src.pathlesstaken import pathlesstaken
+
+sys.dont_write_bytecode = True
 
 
 def main():
